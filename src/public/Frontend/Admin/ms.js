@@ -1,6 +1,6 @@
 async function fetchAndRenderWatches() {
     try {
-        const response = await fetch('/upload');
+        const response = await fetch('http://localhost:3000/upload');
         const watches = await response.json();
 
         const watchContainer = document.getElementById('watchContainer');
@@ -11,7 +11,7 @@ async function fetchAndRenderWatches() {
             watchCard.innerHTML = `
                 <h3>${watch.title}</h3>
                 <p>${watch.description}</p>
-                
+
                 <p>Price: $${watch.price}</p>
                
                 <button class="delete-button" onclick="deleteWatch('${watch._id}')">Delete</button>
@@ -25,7 +25,7 @@ async function fetchAndRenderWatches() {
 
 async function deleteWatch(watchId) {
     try {
-        const response = await fetch(`/delete/${watchId}`, { // Updated endpoint
+        const response = await fetch(`http://localhost:3000/delete/${watchId}`, { // Updated endpoint
             method: 'DELETE',
         });
         const data = await response.json();

@@ -3,6 +3,7 @@ const path = require("path");
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 const app = express();
+const cors = require("cors");
 const multer = require("multer");
 require("./db/conn"); // No need to require mongoose here, as it's already required in your conn.js file
 const User = require("./models/register");
@@ -38,8 +39,16 @@ const upload = multer({
     }
   },
 }).single("photo");
+
+app.use(
+    cors({
+      origin: "*",
+      credentials: true,
+    })
+  );
+  
 // Route to delete a watch by ID
-app.delete('/delete/:id', async (req, res) => {
+app.delete('/delete/:id',cors() ,async (req, res) => {
     try {
         const watchId = req.params.id;
 
@@ -63,36 +72,36 @@ app.delete('/delete/:id', async (req, res) => {
 });
 
 // Route to upload a new watch
-app.post('/upload', async (req, res) => {
+app.post("/upload", upload, async (req, res) => {
     try {
-        const { title, description, price } = req.body; // Extract title, description, and price from request body
-
-        // Check if any required field is missing
-        if (!title || !description || !price) {
-            return res.status(400).json({ error: "Please provide title, description, and price" });
-        }
-
-        // Create a new Watch instance with title, description, and price
-        const newWatch = new Watch({
-            title,
-            description,
-            price, 
-            photo: req.file ? req.file.buffer.toString("base64") : null,// Include price in the Watch document
-        });
-
-        // Save the new Watch instance to the database
-        const savedWatch = await newWatch.save();
-
-        // Respond with the saved Watch object
-        res.status(201).json(savedWatch);
+      const { title, description, price } = req.body;
+  
+      // Check if any required field is missing
+      if (!title || !description || !price || !req.file) {
+        return res.status(400).json({ error: "Please provide all required fields" });
+      }
+  
+      // Create a new Watch instance with title, description, price, and photo path
+      const newWatch = new Watch({
+        title,
+        description,
+        price,
+        photo: req.file ? req.file.buffer.toString("base64") : null,
+      });
+  
+      // Save the new Watch instance to the database
+      const savedWatch = await newWatch.save();
+  
+      // Respond with the saved Watch object
+      res.status(201).json(savedWatch);
     } catch (error) {
-        console.error('Error during watch upload:', error);
-        res.status(500).json({ error: `Internal Server Error: ${error.message}` });
+      console.error("Error during watch upload:", error);
+      res.status(500).json({ error: `Internal Server Error: ${error.message}` });
     }
-});
+  });
 
 
-app.get('/upload', async (req, res) => {
+app.get('/upload',cors() , async (req, res) => {
     try {
         const watches = await Watch.find(); // Retrieve all watches from the database
         res.json(watches); // Respond with the retrieved watches
@@ -154,7 +163,7 @@ app.post('/login', async (req, res) => {
     }
 });
 
-app.post('/purchase',upload, async (req, res) => {
+app.post('/purchase',upload,cors() , async (req, res) => {
     try {
         const { name, address, phone, paymentMethod } = req.body;
         console.log(req.body);
@@ -173,8 +182,40 @@ app.post('/purchase',upload, async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+// Route to fetch registered users' data (name and email)
+app.get('/users', async (req, res) => {
+    try {
+        // Fetch all registered users from the database
+        const users = await User.find({}, 'name email');
+
+        // Respond with the user data
+        res.json(users);
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+        res.status(500).json({ error: `Internal Server Error: ${error.message}` });
+    }
+});
 
 
+app.delete('/users/:id', async (req, res) => {
+    const userId = req.params.id;
+  
+    try {
+      // Check if the provided ID is valid
+      
+      // Find the user by ID and delete it
+      const deletedUser = await User.findByIdAndDelete(userId);
+  
+      if (!deletedUser) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+  
+      res.json({ message: 'User deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
 
 // Define other routes and app configurations...
 
