@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="shortcut icon" href="../favicon_io/favicon-32x32.png" type="image/x-icon">
+    <link rel="stylesheet" href="admin.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch Upload</title>
+
+</head>
+<body>
+   
+    <section id="sidebar">
+		<a href="http://localhost:3000/index2.html" class="brand">
+			
+			<span class="text">Watchmandu </span>
+		</a>
+		<ul class="side-menu top">
+			<li class="active">
+				<a href="Admin.html">
+					<i class='bx bxs-dashboard' ></i>
+					<span class="text">Panel</span>
+				</a>
+			</li>
+		<!--	<li>
+				<a href="mystore.html">
+					<i class='bx bxs-shopping-bag-alt' ></i>
+					<span class="text">My Store</span>
+				</a>
+			</li>
+			<li>
+				<a href="#">
+					<i class='bx bxs-doughnut-chart' ></i>
+					<span class="text">Analytics</span>
+				</a>
+			</li>
+			
+			<li>
+				<a href="#">
+					<i class='bx bxs-group' ></i>
+					<span class="text">Team</span>
+				</a>
+			</li>
+		</ul> -->
+	
+	</section> 
+<!--
+    <form id="watchUploadForm">
+        <label for="title">Watch Title:</label>
+        <input type="text" id="title" name="title" required>
+
+        <label for="description">Watch Description:</label>
+        <textarea id="description" name="description" rows="4" required></textarea>
+
+        <button type="button" onclick="uploadWatch()">Upload Watch</button>
+    </form>
+-->
+    <!--Box Content-->
+    <section id="content">
+		<!-- NAVBAR -->
+		
+		<!-- NAVBAR -->
+
+		<!-- MAIN -->
+		<main>
+            <div id="main">
+                <div class="head-title">
+                    <div class="left">
+                        <h1>My Store</h1>
+                        <ul class="breadcrumb">
+                            <li>
+                                <a href="#">My Store</a>
+                            </li>
+                            <li><i class='bx bx-chevron-right' ></i></li>
+                            <li>
+                                <a class="active" href="#">Home</a>
+                            </li>
+                        </ul>
+                    </div>		
+                </div>
+            </div>
+            <div id="page2">
+                <ul class="box-info">
+                    <li>
+                        <span class="text">
+                            <h3>Watch Upload</h3>
+                            <form id="watchUploadForm">
+                                <label for="title">Watch Title:</label>
+                                <input type="text" id="title" name="title" required>
+                            
+                                <label for="description">Watch Description:</label>
+                                <textarea id="description" name="description" rows="4" required></textarea>
+                            
+                                <label for="price">Price:</label>
+                                <input type="text" id="price" name="price" required> <!-- Add input field for price -->
+                            
+                                <button type="button" onclick="uploadWatch()">Upload Watch</button>
+                            </form>
+                            
+                        </span>
+                    </li>
+                </ul>
+                <style>
+                            
+                    form {
+                        background-color: #fff;
+                        padding: 20px;
+                        border-radius: 8px;
+                        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                    }
+                    label {
+                        display: block;
+                        margin-bottom: 8px;
+                    }
+                    input {
+                        width: 100%;
+                        padding: 8px;
+                        margin-bottom: 16px;
+                        box-sizing: border-box;
+                    }
+                    button {
+                        background-color: #4caf50;
+                        color: white;
+                        padding: 10px 15px;
+                        border: none;
+                        border-radius: 4px;
+                        cursor: pointer;
+                    }
+                    </style>
+                </div>
+            
+                <ul class="box-info">
+                    <li>
+                        <span class="text">
+                            <h3>Watches</h3>
+                            <div id="watchContainer"></div>               
+                            
+                            <!--Product CSS-->
+                            <link rel="stylesheet" href="../Product/product.css">                         
+                            <!--Product JS-->
+                            <script src="ms.js"></script>                          
+
+                        </span>
+                    </li>
+                </ul>
+            </div>
+
+			
+		</main>
+		<!-- MAIN -->
+	</section>
+
+    <!--Box Css
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+label {
+    display: block;
+    margin-bottom: 8px;
+}
+input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+}
+button {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+-->
+    </style>
+    <script src="admin.js"></script>
+	
+</div>
+</body>
+</html>
