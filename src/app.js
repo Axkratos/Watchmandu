@@ -46,6 +46,33 @@ app.use(
       credentials: true,
     })
   );
+  app.put('/upload/:productId', async (req, res) => {
+    try {
+        const productId = req.params.productId;
+        const { name, description, price } = req.body;
+
+        // Find the product by ID
+        const product = await Watch.findById(productId);
+
+        if (!product) {
+            return res.status(404).json({ error: 'Product not found' });
+        }
+
+        // Update the product properties
+        product.name = name;
+        product.description = description;
+        product.price = price;
+
+        // Save the updated product
+        await product.save();
+
+        res.status(200).json({ message: 'Product updated successfully', product });
+    } catch (error) {
+        console.error('Error updating product:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
   
 // Route to delete a watch by ID
 app.delete('/delete/:id',cors() ,async (req, res) => {

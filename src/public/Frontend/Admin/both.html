@@ -24,6 +24,12 @@
                     <span class="text">Manage Users</span>
                 </a>
             </li>
+            <li>
+                <a href="#" id="manageProductsTab">
+                    <i class='bx bxs-cart' ></i>
+                    <span class="text">Manage Products</span>
+                </a>
+            </li>
         </ul>
     </section>
 
@@ -51,44 +57,54 @@
             <h2>Manage Users</h2>
             <ul id="userList"></ul>
         </div>
+
+        <div id="manageProductsContainer" style="display: none;">
+            <h2>Manage Products</h2>
+            <ul id="productList"></ul>
+        </div>
     </section>
 
     <script>
-        async function fetchAndRenderUsers() {
+        async function fetchAndRenderProducts() {
             try {
-                const response = await fetch('http://localhost:3000/users');
-                const users = await response.json();
+                const response = await fetch('http://localhost:3000/upload');
+                const products = await response.json();
 
-                const userList = document.getElementById('userList');
-                userList.innerHTML = ''; // Clear previous user list
+                const productList = document.getElementById('productList');
+                productList.innerHTML = ''; // Clear previous product list
 
-                users.forEach(user => {
+                products.forEach(product => {
                     const listItem = document.createElement('li');
                     listItem.innerHTML = `
-                        <span>${user.name} - ${user.email}</span>
-                        <button onclick="deleteUser('${user._id}')">Delete</button>
-                    `;
-                    userList.appendChild(listItem);
+                    <span class="product-title">${product.title}</span>
+        <p class="product-description">${product.description}</p>
+        <p class="product-price">$${product.price}</p>
+        <div class="product-buttons">
+            <button class="delete-btn" onclick="deleteProduct('${product._id}')">Delete</button>
+            <button class="update-btn" onclick="updateProduct('${product._id}')">Update</button>
+        </div>
+        `
+                    productList.appendChild(listItem);
                 });
             } catch (error) {
-                console.error('Error fetching user data:', error);
+                console.error('Error fetching product data:', error);
             }
         }
 
-        async function deleteUser(userId) {
+        async function deleteProduct(productId) {
             try {
-                const response = await fetch(`http://localhost:3000/users/${userId}`, {
+                const response = await fetch(`http://localhost:3000/delete/${productId}`, {
                     method: 'DELETE'
                 });
 
                 if (response.ok) {
-                    // User deleted successfully, fetch and render updated user list
-                    fetchAndRenderUsers();
+                    // Product deleted successfully, fetch and render updated product list
+                    fetchAndRenderProducts();
                 } else {
-                    console.error('Failed to delete user');
+                    console.error('Failed to delete product');
                 }
             } catch (error) {
-                console.error('Error deleting user:', error);
+                console.error('Error deleting product:', error);
             }
         }
 
@@ -123,16 +139,81 @@
                 alert('An error occurred while uploading the watch.');
             }
         }
+        async function fetchAndRenderUsers() {
+    try {
+        const response = await fetch('http://localhost:3000/users');
+        const users = await response.json();
+
+        const userList = document.getElementById('userList');
+        userList.innerHTML = ''; // Clear previous user list
+
+        users.forEach(user => {
+            const listItem = document.createElement('li');
+            listItem.innerHTML = `
+                <span>${user.name} - ${user.email}</span>
+                <button onclick="deleteUser('${user._id}')">Delete</button>
+            `;
+            userList.appendChild(listItem);
+        });
+    } catch (error) {
+        console.error('Error fetching user data:', error);
+    }
+}
+
+
+async function updateProduct(productId) {
+    const newName = prompt('Enter new name:');
+    const newDescription = prompt('Enter new description:');
+    const newPrice = prompt('Enter new price:');
+
+    if (newName && newDescription && newPrice) {
+        try {
+            const response = await fetch(`http://localhost:3000/upload/${productId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    title: newName, // Changed from 'name' to 'title'
+                    description: newDescription,
+                    price: parseFloat(newPrice)
+                })
+            });
+
+            if (response.ok) {
+                // Product updated successfully, fetch and render updated product list
+                fetchAndRenderProducts();
+                alert('Product updated successfully!');
+            } else {
+                console.error('Failed to update product');
+            }
+        } catch (error) {
+            console.error('Error updating product:', error);
+        }
+    } else {
+        alert('Please provide valid input for name, description, and price.');
+    }
+}
+
 
         document.getElementById('uploadWatchTab').addEventListener('click', () => {
             document.getElementById('watchUploadContainer').style.display = 'block';
             document.getElementById('manageUsersContainer').style.display = 'none';
+            document.getElementById('manageProductsContainer').style.display = 'none';
         });
 
         document.getElementById('manageUsersTab').addEventListener('click', () => {
             document.getElementById('watchUploadContainer').style.display = 'none';
             document.getElementById('manageUsersContainer').style.display = 'block';
+            document.getElementById('manageProductsContainer').style.display = 'none';
             fetchAndRenderUsers();
+        });
+
+        document.getElementById('manageProductsTab').addEventListener('click', () => {
+            document.getElementById('watchUploadContainer').style.display = 'none';
+            document.getElementById('manageUsersContainer').style.display = 'none';
+            document.getElementById('manageProductsContainer').style.display = 'block';
+            fetchAndRenderProducts();
         });
     </script>
 </body>
