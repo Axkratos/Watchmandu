@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <section id="sidebar">
+        <a href="http://localhost:3000/index2.html" class="brand">
+            <span class="text">Watchmandu</span>
+        </a>
+        <ul class="side-menu top">
+            <li class="active">
+                <a href="#" id="uploadWatchTab">
+                    <i class='bx bxs-dashboard' ></i>
+                    <span class="text">Upload Watch</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" id="manageUsersTab">
+                    <i class='bx bxs-shopping-bag-alt' ></i>
+                    <span class="text">Manage Users</span>
+                </a>
+            </li>
+        </ul>
+    </section>
+
+    <section id="content">
+        <div id="watchUploadContainer">
+            <h2>Watch Upload</h2>
+            <form id="watchUploadForm">
+                <label for="title">Watch Title:</label>
+                <input type="text" id="title" name="title" required>
+            
+                <label for="description">Watch Description:</label>
+                <textarea id="description" name="description" rows="4" required></textarea>
+            
+                <label for="price">Price:</label>
+                <input type="text" id="price" name="price" required>
+                
+                <label for="photo">Upload Photo:</label>
+                <input type="file" id="photo" name="photo" accept="image/*">
+                
+                <button type="button" onclick="uploadWatch()">Upload Watch</button>
+            </form>
+        </div>
+
+        <div id="manageUsersContainer" style="display: none;">
+            <h2>Manage Users</h2>
+            <ul id="userList"></ul>
+        </div>
+    </section>
+
+    <script>
+        async function fetchAndRenderUsers() {
+            try {
+                const response = await fetch('http://localhost:3000/users');
+                const users = await response.json();
+
+                const userList = document.getElementById('userList');
+                userList.innerHTML = ''; // Clear previous user list
+
+                users.forEach(user => {
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `
+                        <span>${user.name} - ${user.email}</span>
+                        <button onclick="deleteUser('${user._id}')">Delete</button>
+                    `;
+                    userList.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        }
+
+        async function deleteUser(userId) {
+            try {
+                const response = await fetch(`http://localhost:3000/users/${userId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    // User deleted successfully, fetch and render updated user list
+                    fetchAndRenderUsers();
+                } else {
+                    console.error('Failed to delete user');
+                }
+            } catch (error) {
+                console.error('Error deleting user:', error);
+            }
+        }
+
+        async function uploadWatch() {
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const price = document.getElementById('price').value;
+            const photoInput = document.getElementById('photo');
+            const photoFile = photoInput.files[0];
+
+            const formData = new FormData();
+            formData.append('title', title);
+            formData.append('description', description);
+            formData.append('price', price);
+            formData.append('photo', photoFile);
+
+            try {
+                const response = await fetch('http://localhost:3000/upload', {
+                    method: 'POST',
+                    body: formData,
+                });
+                
+                if (response.ok) {
+                    // Watch uploaded successfully
+                    alert('Watch uploaded successfully!');
+                } else {
+                    console.error('Failed to upload watch');
+                    alert('An error occurred while uploading the watch.');
+                }
+            } catch (error) {
+                console.error('Error uploading watch:', error);
+                alert('An error occurred while uploading the watch.');
+            }
+        }
+
+        document.getElementById('uploadWatchTab').addEventListener('click', () => {
+            document.getElementById('watchUploadContainer').style.display = 'block';
+            document.getElementById('manageUsersContainer').style.display = 'none';
+        });
+
+        document.getElementById('manageUsersTab').addEventListener('click', () => {
+            document.getElementById('watchUploadContainer').style.display = 'none';
+            document.getElementById('manageUsersContainer').style.display = 'block';
+            fetchAndRenderUsers();
+        });
+    </script>
+</body>
+</html>

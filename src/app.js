@@ -111,33 +111,37 @@ app.get('/upload',cors() , async (req, res) => {
     }
 });
 
-app.post('/register', async (req, res) => {
+app.post("/register", async (req, res) => {
     try {
-        const { name, email, password } = req.body;
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const newUser = new User({
-            name,
-            email,
-            password: hashedPassword,
-        });
-
-        await newUser.save();
-
-        //res.redirect('http://localhost:3000/Login%20page/Sign_up.html'); in case the new response doesnot work
-        res.send(`
-            <script>
-                alert("Registration successful! You can now login.");
-                window.location.href = 'http://localhost:3000/Login%20page/Sign_up.html'; // Redirect to login page
-            </script>
-        `);
-    } catch (error) {
-        console.error('Error during registration:', error);
-        res.status(500).send(`Internal Server Error: ${error.message}`);
-    }
+      const { name, email, password } = req.body;
   
-});
+      // Check if the user already exists
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(400).send("User already exists.");
+      }
+  
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
+      const newUser = new User({
+        name,
+        email,
+        password: hashedPassword,
+      });
+  
+      await newUser.save();
+  
+      res.send(`
+        <script>
+            alert("Registration successful! You can now login.");
+            window.location.href = 'http://localhost:3000/Login%20page/Sign_up.html'; // Redirect to login page
+        </script>
+      `);
+    } catch (error) {
+      console.error('Error during registration:', error);
+      res.status(500).send(`Internal Server Error: ${error.message}`);
+    }
+  });
 
 
 app.post('/login', async (req, res) => {
