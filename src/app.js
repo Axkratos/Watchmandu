@@ -3,6 +3,7 @@ const path = require("path");
 const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
 const app = express();
+const multer = require("multer");
 require("./db/conn"); // No need to require mongoose here, as it's already required in your conn.js file
 const User = require("./models/register");
 const Watch = require("./models/watch");
@@ -21,6 +22,22 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "./public/Frontend/index.html"));
 });
 
+
+const storage = multer.memoryStorage();
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedMimeTypes = ["image/jpeg", "image/png", "image/gif"];
+    if (allowedMimeTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error("Invalid file type. Only JPEG, PNG, and GIF are allowed."));
+    }
+  },
+}).single("photo");
 // Route to delete a watch by ID
 app.delete('/delete/:id', async (req, res) => {
     try {
@@ -59,7 +76,8 @@ app.post('/upload', async (req, res) => {
         const newWatch = new Watch({
             title,
             description,
-            price, // Include price in the Watch document
+            price, 
+            photo: req.file ? req.file.buffer.toString("base64") : null,// Include price in the Watch document
         });
 
         // Save the new Watch instance to the database
@@ -136,13 +154,13 @@ app.post('/login', async (req, res) => {
     }
 });
 
-app.post('/purchase', async (req, res) => {
+app.post('/purchase',upload, async (req, res) => {
     try {
         const { name, address, phone, paymentMethod } = req.body;
         console.log(req.body);
         
         // Creating a new Purchase instance
-        const newPurchase = new Purchase({ name, address, phone, paymentMethod });
+        const newPurchase = new Purchase({ name, address, phone, paymentMethod, });
         
         // Saving the new purchase to the database
         const savedPurchase = await newPurchase.save();

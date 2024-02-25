@@ -94,19 +94,31 @@ function uploadWatch() {
     const title = document.getElementById('title').value;
     const description = document.getElementById('description').value;
     const price = document.getElementById('price').value; 
-    
+    const photoInput = document.getElementById('photo'); // Assuming you have an input element with id 'photo' for photo upload
+
     // Validate the price field
     if (isNaN(price)) {
         console.error('Invalid price value:', price);
         return; // Stop further execution if price is not a number
     }
 
+    // Check if a file is selected
+    if (!photoInput.files || photoInput.files.length === 0) {
+        console.error('No photo selected');
+        return;
+    }
+
+    const photoFile = photoInput.files[0];
+
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('description', description);
+    formData.append('price', price);
+    formData.append('photo', photoFile);
+
     fetch('/upload', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ title, description, price }),
+        body: formData,
     })
     .then(response => response.json())
     .then(data => {
@@ -117,5 +129,6 @@ function uploadWatch() {
         console.error('Error:', error);
     });
 }
+
 
 

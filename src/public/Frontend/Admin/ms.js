@@ -11,6 +11,7 @@ async function fetchAndRenderWatches() {
             watchCard.innerHTML = `
                 <h3>${watch.title}</h3>
                 <p>${watch.description}</p>
+                
                 <p>Price: $${watch.price}</p>
                
                 <button class="delete-button" onclick="deleteWatch('${watch._id}')">Delete</button>
